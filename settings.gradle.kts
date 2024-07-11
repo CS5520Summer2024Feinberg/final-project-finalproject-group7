@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pixel painter"
-include ':app'
+rootProject.name = "PixelPainter"
+include(":app")
+ 
