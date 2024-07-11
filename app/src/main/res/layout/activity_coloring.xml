@@ -1,0 +1,119 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_coloring"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Title Bar -->
+    <LinearLayout
+        android:id="@+id/title_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:background="#333333"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:background="@color/colorPrimary" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pixel Painter - Freestyle Mode"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <!-- Color Slider -->
+    <SeekBar
+        android:id="@+id/color_slider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/title_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Current Color Display -->
+    <View
+        android:id="@+id/current_color_display"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="#FF0000"
+        app:layout_constraintTop_toBottomOf="@id/color_slider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp" />
+
+    <!-- Grid Canvas -->
+    <GridView
+        android:id="@+id/grid_canvas"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:numColumns="10"
+        android:gravity="center"
+        android:stretchMode="columnWidth"
+        android:background="#EEEEEE"
+        app:layout_constraintTop_toBottomOf="@id/current_color_display"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tools_bar"
+        android:layout_marginTop="10dp" />
+
+    <!-- Tools Bar -->
+    <LinearLayout
+        android:id="@+id/tools_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/button_undo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Undo" />
+
+        <Button
+            android:id="@+id/button_redo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Redo" />
+
+        <Button
+            android:id="@+id/button_eraser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Eraser" />
+
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save" />
+
+        <Button
+            android:id="@+id/button_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
