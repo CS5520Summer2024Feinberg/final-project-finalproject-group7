@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -40,4 +42,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+    implementation("com.google.firebase:firebase-analytics:17.4.3")
+    implementation("com.google.firebase:firebase-messaging:20.2.1")
+    implementation("com.google.firebase:firebase-inappmessaging:19.0.7")
+    implementation("com.google.firebase:firebase-database:19.3.1")
 }

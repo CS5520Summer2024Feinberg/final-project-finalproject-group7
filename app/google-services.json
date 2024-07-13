@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "470100515917",
+    "firebase_url": "https://pixelpainter-65be4-default-rtdb.firebaseio.com",
+    "project_id": "pixelpainter-65be4",
+    "storage_bucket": "pixelpainter-65be4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470100515917:android:4e0aa15921a15960fa1004",
+        "android_client_info": {
+          "package_name": "edu.neu.pixelpainter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcEeC7LowRizTXVwbHLMXvFOQaGM9qq8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
