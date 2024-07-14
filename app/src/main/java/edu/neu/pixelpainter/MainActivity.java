@@ -4,7 +4,6 @@ package edu.neu.pixelpainter;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -75,5 +74,6 @@ public class MainActivity extends AppCompatActivity {
             buttonSignup.setVisibility(View.VISIBLE);
             buttonSignout.setVisibility(View.GONE);
         });
+        findViewById(R.id.button_adventure_mode).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, GameActivity.class)));
     }
 }
