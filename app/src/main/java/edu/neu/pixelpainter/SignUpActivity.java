@@ -61,8 +61,8 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signUp(String username, String password) {
-        // Create a new user with a 'process' subclass
-        User user = new User(password);
+        // Create a new user with a 'processing' field
+        User user = new User(password, 0); // Initialize with default processing value 0
         mDatabase.child("users").child(username).setValue(user).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show();
@@ -78,23 +78,14 @@ public class SignUpActivity extends AppCompatActivity {
         finish();
     }
 
-    // User class with a 'process' subclass
+    // User class with a 'processing' field
     public static class User {
         public String password;
-        public Process process;
+        public int processing;
 
-        public User(String password) {
+        public User(String password, int processing) {
             this.password = password;
-            this.process = new Process();
-        }
-    }
-
-    // Process subclass
-    public static class Process {
-        public String data;
-
-        public Process() {
-            this.data = "default data"; // Initialize with some default data
+            this.processing = processing;
         }
     }
 }

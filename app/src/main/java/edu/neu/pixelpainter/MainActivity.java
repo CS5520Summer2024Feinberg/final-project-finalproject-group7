@@ -1,7 +1,5 @@
 package edu.neu.pixelpainter;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String username;
     private String password;
-    private String processData;
+    private int processing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
-        processData = intent.getStringExtra("processData");
+        processing = intent.getIntExtra("processing", 0);
 
         // Check if the username is null or empty and display appropriate message
         if (username == null || username.isEmpty()) {
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             // Signout logic
             username = null;
             password = null;
-            processData = null;
+            processing = 0;
             Toast.makeText(MainActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
             buttonLogin.setVisibility(View.VISIBLE);
             buttonSignup.setVisibility(View.VISIBLE);

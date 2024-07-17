@@ -46,15 +46,13 @@ public class LoginActivity extends AppCompatActivity {
                 String storedPassword = userSnapshot.child("password").getValue(String.class);
                 if (storedPassword.equals(password)) {
                     // Retrieve all data belonging to the user
-                    User user = userSnapshot.getValue(User.class);
-                    if (user != null) {
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("username", username);
-                        intent.putExtra("password", user.password);
-                        intent.putExtra("processData", user.process.data);
-                        startActivity(intent);
-                        finish();
-                    }
+                    int processing = userSnapshot.child("processing").getValue(Integer.class);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("username", username);
+                    intent.putExtra("password", password);
+                    intent.putExtra("processing", processing);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(LoginActivity.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
                 }
@@ -67,29 +65,5 @@ public class LoginActivity extends AppCompatActivity {
     public void onSignUpLinkClicked(View view) {
         startActivity(new Intent(this, SignUpActivity.class));
         finish();
-    }
-
-    // User class with a 'process' subclass
-    public static class User {
-        public String password;
-        public Process process;
-
-        public User() {
-            // Default constructor required for calls to DataSnapshot.getValue(User.class)
-        }
-
-        public User(String password) {
-            this.password = password;
-            this.process = new Process();
-        }
-    }
-
-    // Process subclass
-    public static class Process {
-        public String data;
-
-        public Process() {
-            this.data = "default data"; // Initialize with some default data
-        }
     }
 }
