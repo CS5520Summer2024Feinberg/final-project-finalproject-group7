@@ -2,6 +2,7 @@ package edu.neu.pixelpainter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -11,8 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.firebase.FirebaseApp;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private String username;
     private String password;
     private int processing;
+
+    private ViewPager2 viewPager2;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,5 +82,55 @@ public class MainActivity extends AppCompatActivity {
             buttonSignout.setVisibility(View.GONE);
         });
         findViewById(R.id.button_adventure_mode).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, GameActivity.class)));
+
+
+
+
+        //viewPager
+        viewPager2 = findViewById(R.id.viewPager);
+
+        List<Integer> images = Arrays.asList(R.drawable.a, R.drawable.b, R.drawable.c);
+        List<String> headlines = Arrays.asList("Image 1", "Image 2", "Image 3");
+
+        List<ViewPagerItem> viewPagerArrayList = new ArrayList<>();
+        for(int i =0;i<images.size();i++){
+            ViewPagerItem viewPagerItem = new ViewPagerItem(images.get(i), headlines.get(i));
+            viewPagerArrayList.add(viewPagerItem);
+        }
+        viewPagerAdapter = new ViewPagerAdapter(viewPagerArrayList);
+        viewPager2.setAdapter(viewPagerAdapter);
+
+        //click
+        viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+               // check if user have permission to game
+                if (username != null && processing < position) {
+                    Toast.makeText(MainActivity.this, "Need to complete previous levels", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(MainActivity.this, "need game activity", Toast.LENGTH_LONG).show();
+                // need implement activity for games
+//                Intent intent;
+//                switch (position) {
+//                    case 0:
+//                        intent = new Intent(MainActivity.this, Activity1.class);
+//                        break;
+//                    case 1:
+//                        intent = new Intent(MainActivity.this, Activity2.class);
+//                        break;
+//                    default:
+//                        intent = new Intent(MainActivity.this, DefaultActivity.class);
+//                        break;
+//                }
+//                startActivity(intent);
+            }
+        });
+
+
+
     }
+
+
+
 }

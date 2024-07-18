@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PixelPainter</string>
+    <string name="viewImage1">Image1</string>
+    <string name="viewImage2">Image2</string>
+    <string name="viewImage3">Image3</string>
+
 </resources>
