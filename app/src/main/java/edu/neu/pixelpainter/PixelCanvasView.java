@@ -8,9 +8,15 @@ import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class PixelCanvasView extends View {
 
@@ -24,8 +30,13 @@ public class PixelCanvasView extends View {
 
     private boolean eraseMode = false;
 
+    private Context context;
+
+    private int level;
+
     public PixelCanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         paint = new Paint();
         borderPaint = new Paint();
         borderPaint.setColor(Color.GRAY);
@@ -39,7 +50,7 @@ public class PixelCanvasView extends View {
 
         pixels = new int[gridSize][gridSize];
         backgroundNumbers = new int[gridSize][gridSize];
-        generateBackgroundNumbers();
+        generateBackgroundNumbers(level);
     }
 
     private void generateBackgroundNumbers() {
@@ -47,6 +58,26 @@ public class PixelCanvasView extends View {
             for (int j = 0; j < gridSize; j++) {
                 backgroundNumbers[i][j] = (i * gridSize + j) % 10 + 1; // Assign numbers 1 to 10 cyclically
             }
+        }
+    }
+
+    private void generateBackgroundNumbers(int level) {
+        int resId = context.getResources().getIdentifier("level" + level, "raw", context.getPackageName());
+        try {
+            InputStream inputStream = context.getResources().openRawResource(resId);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            int row = 0;
+            while ((line = reader.readLine()) != null && row < gridSize) {
+                String[] numbers = line.split(",");
+                for (int col = 0; col < numbers.length && col < gridSize; col++) {
+                    backgroundNumbers[col][row] = Integer.parseInt(numbers[col]);
+                }
+                row++;
+            }
+            reader.close();
+        } catch (IOException e) {
+            Log.e("FileReadError", "Error reading file level" + level, e);
         }
     }
 
@@ -68,12 +99,15 @@ public class PixelCanvasView extends View {
                 canvas.drawRect(rect, borderPaint);
 
                 // Draw number
-                if (pixels[i][j] == 0) { // Only draw number if the pixel is not colored
+//                if (pixels[i][j] == 0) { // Only draw number if the pixel is not colored
+                if (backgroundNumbers[i][j] != 0){
                     canvas.drawText(String.valueOf(backgroundNumbers[i][j]),
                             (i + 0.5f) * pixelSize,
                             (j + 0.75f) * pixelSize,
                             textPaint);
                 }
+
+//                }
             }
         }
     }
@@ -115,6 +149,10 @@ public class PixelCanvasView extends View {
 
     public void setEraseMode(boolean eraseMode) {
         this.eraseMode = eraseMode;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public int getCorrectColorCount(int[] colorNumbers, int[] colors) {

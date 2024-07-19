@@ -27,13 +27,14 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
+        // Get the level from the intent
+        level = getIntent().getIntExtra("level", 0);
         pixelCanvasView = findViewById(R.id.pixelCanvas);
+        pixelCanvasView.setLevel(level);
         colorDisplay = findViewById(R.id.colorDisplay);
         LinearLayout paletteLayout = findViewById(R.id.paletteLayout);
 
-        // Get the level from the intent
-        level = getIntent().getIntExtra("level", 0);
+
 
         for (int i = 0; i < colors.length; i++) {
             final int color = colors[i];
@@ -76,10 +77,10 @@ public class GameActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState != null) {
-            eraseMode = savedInstanceState.getBoolean(KEY_ERASE_MODE, false);
-            Log.i("eraseMode", String.valueOf(eraseMode));
-            int selectedColor = savedInstanceState.getInt(KEY_SELECTED_COLOR, Color.WHITE);
             level = savedInstanceState.getInt(KEY_LEVEL, 0);
+            eraseMode = savedInstanceState.getBoolean(KEY_ERASE_MODE, false);
+            int selectedColor = savedInstanceState.getInt(KEY_SELECTED_COLOR, Color.WHITE);
+            pixelCanvasView.setLevel(level);
             pixelCanvasView.setSelectedColor(selectedColor);
             pixelCanvasView.setEraseMode(eraseMode);
             if (eraseMode) {
