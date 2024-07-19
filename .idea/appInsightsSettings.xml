@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="edu.neu.pixelpainter" />
+                  <option name="mobileSdkAppId" value="1:470100515917:android:4e0aa15921a15960fa1004" />
+                  <option name="projectId" value="pixelpainter-65be4" />
+                  <option name="projectNumber" value="470100515917" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

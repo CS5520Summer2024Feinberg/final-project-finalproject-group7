@@ -2,7 +2,6 @@ package edu.neu.pixelpainter;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -81,56 +80,33 @@ public class MainActivity extends AppCompatActivity {
             buttonSignup.setVisibility(View.VISIBLE);
             buttonSignout.setVisibility(View.GONE);
         });
-        findViewById(R.id.button_adventure_mode).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, GameActivity.class)));
 
-
-
-
-        //viewPager
+        // Set up ViewPager2
         viewPager2 = findViewById(R.id.viewPager);
 
         List<Integer> images = Arrays.asList(R.drawable.a, R.drawable.b, R.drawable.c);
         List<String> headlines = Arrays.asList("Image 1", "Image 2", "Image 3");
 
         List<ViewPagerItem> viewPagerArrayList = new ArrayList<>();
-        for(int i =0;i<images.size();i++){
+        for (int i = 0; i < images.size(); i++) {
             ViewPagerItem viewPagerItem = new ViewPagerItem(images.get(i), headlines.get(i));
             viewPagerArrayList.add(viewPagerItem);
         }
         viewPagerAdapter = new ViewPagerAdapter(viewPagerArrayList);
         viewPager2.setAdapter(viewPagerAdapter);
 
-        //click
+        // ViewPager item click listener
         viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-               // check if user have permission to game
-                if (username != null && processing < position) {
+                if (position > processing) {
                     Toast.makeText(MainActivity.this, "Need to complete previous levels", Toast.LENGTH_LONG).show();
-                    return;
+                } else {
+                    Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
+                    gameIntent.putExtra("level", position);
+                    startActivity(gameIntent);
                 }
-                Toast.makeText(MainActivity.this, "need game activity", Toast.LENGTH_LONG).show();
-                // need implement activity for games
-//                Intent intent;
-//                switch (position) {
-//                    case 0:
-//                        intent = new Intent(MainActivity.this, Activity1.class);
-//                        break;
-//                    case 1:
-//                        intent = new Intent(MainActivity.this, Activity2.class);
-//                        break;
-//                    default:
-//                        intent = new Intent(MainActivity.this, DefaultActivity.class);
-//                        break;
-//                }
-//                startActivity(intent);
             }
         });
-
-
-
     }
-
-
-
 }
