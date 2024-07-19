@@ -29,8 +29,10 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         // Get the level from the intent
         level = getIntent().getIntExtra("level", 0);
+        Log.i("onCreate",String.valueOf(level));
         pixelCanvasView = findViewById(R.id.pixelCanvas);
         pixelCanvasView.setLevel(level);
+
         colorDisplay = findViewById(R.id.colorDisplay);
         LinearLayout paletteLayout = findViewById(R.id.paletteLayout);
 
@@ -77,12 +79,13 @@ public class GameActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState != null) {
-            level = savedInstanceState.getInt(KEY_LEVEL, 0);
             eraseMode = savedInstanceState.getBoolean(KEY_ERASE_MODE, false);
             int selectedColor = savedInstanceState.getInt(KEY_SELECTED_COLOR, Color.WHITE);
-            pixelCanvasView.setLevel(level);
+
             pixelCanvasView.setSelectedColor(selectedColor);
             pixelCanvasView.setEraseMode(eraseMode);
+            pixelCanvasView.setLevel(savedInstanceState.getInt(KEY_LEVEL, 0));
+
             if (eraseMode) {
                 colorDisplay.setBackgroundResource(R.drawable.erase);
             } else {
@@ -100,6 +103,7 @@ public class GameActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_ERASE_MODE, eraseMode);
         outState.putInt(KEY_SELECTED_COLOR, pixelCanvasView.getSelectedColor());
-        outState.putInt(KEY_LEVEL, level);
+        outState.putInt(KEY_LEVEL, pixelCanvasView.getLevel());
+
     }
 }

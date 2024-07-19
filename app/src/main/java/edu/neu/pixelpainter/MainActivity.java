@@ -18,12 +18,17 @@ import com.google.firebase.FirebaseApp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button buttonLogin;
     private Button buttonSignup;
     private Button buttonSignout;
+
+    private Button buttonAdvanture;
+
+    private Button buttonFreestyle;
 
     private String username;
     private String password;
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         buttonLogin = findViewById(R.id.button_login);
         buttonSignup = findViewById(R.id.button_signup);
         buttonSignout = findViewById(R.id.button_signout);
+        buttonAdvanture = findViewById(R.id.button_adventure_mode);
+        buttonFreestyle = findViewById(R.id.button_freestyle_mode);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -60,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
             buttonLogin.setVisibility(View.VISIBLE);
             buttonSignup.setVisibility(View.VISIBLE);
             buttonSignout.setVisibility(View.GONE);
+            buttonAdvanture.setVisibility(View.GONE);
+
         } else {
             Toast.makeText(this, "Welcome, " + username, Toast.LENGTH_SHORT).show();
             buttonLogin.setVisibility(View.GONE);
@@ -85,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager2 = findViewById(R.id.viewPager);
 
         List<Integer> images = Arrays.asList(R.drawable.a, R.drawable.b, R.drawable.c);
-        List<String> headlines = Arrays.asList("Image 1", "Image 2", "Image 3");
+        List<String> headlines = Arrays.asList("Level1:Ice Cream", "Level2:Love", "Level3:Frog");
 
         List<ViewPagerItem> viewPagerArrayList = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
@@ -100,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 if (position > processing) {
-                    Toast.makeText(MainActivity.this, "Need to complete previous levels", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Need to complete level:" + (processing+1), Toast.LENGTH_LONG).show();
                 } else {
                     Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
                     gameIntent.putExtra("level", position);
@@ -108,5 +117,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // freestyle
+        buttonFreestyle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
+                Random random = new Random();
+                gameIntent.putExtra("level", random.nextInt(images.size()));
+                startActivity(gameIntent);
+            }
+        });
+
     }
 }

@@ -1,6 +1,7 @@
 package edu.neu.pixelpainter;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -50,19 +51,26 @@ public class PixelCanvasView extends View {
 
         pixels = new int[gridSize][gridSize];
         backgroundNumbers = new int[gridSize][gridSize];
-        generateBackgroundNumbers(level);
+//        init(attrs);
+//        generateBackgroundNumbers();
     }
+//    private void init(AttributeSet attrs) {
+//        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PixelCanvasView);
+//        level = a.getInt(R.styleable.PixelCanvasView_level, 0); // Default to 0 if not set
+//        a.recycle();
+//    }
+
+//    private void generateBackgroundNumbers() {
+//        for (int i = 0; i < gridSize; i++) {
+//            for (int j = 0; j < gridSize; j++) {
+//                backgroundNumbers[i][j] = (i * gridSize + j) % 10 + 1; // Assign numbers 1 to 10 cyclically
+//            }
+//        }
+//    }
 
     private void generateBackgroundNumbers() {
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
-                backgroundNumbers[i][j] = (i * gridSize + j) % 10 + 1; // Assign numbers 1 to 10 cyclically
-            }
-        }
-    }
-
-    private void generateBackgroundNumbers(int level) {
-        int resId = context.getResources().getIdentifier("level" + level, "raw", context.getPackageName());
+        Log.i("generateBackgroundNumbers", String.valueOf(this.level));
+        int resId = context.getResources().getIdentifier("level" + this.level, "raw", context.getPackageName());
         try {
             InputStream inputStream = context.getResources().openRawResource(resId);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -77,7 +85,7 @@ public class PixelCanvasView extends View {
             }
             reader.close();
         } catch (IOException e) {
-            Log.e("FileReadError", "Error reading file level" + level, e);
+            Log.e("FileReadError", "Error reading file level" + this.level, e);
         }
     }
 
@@ -153,7 +161,15 @@ public class PixelCanvasView extends View {
 
     public void setLevel(int level) {
         this.level = level;
+        generateBackgroundNumbers();
+        invalidate();
     }
+
+    public int getLevel() {
+        return level;
+    }
+
+
 
     public int getCorrectColorCount(int[] colorNumbers, int[] colors) {
         int correctCount = 0;
