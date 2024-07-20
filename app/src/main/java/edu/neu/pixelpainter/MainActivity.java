@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
-        processing = intent.getIntExtra("processing", 0);
+        processing = intent.getIntExtra("processing", 1);
 
         // Check if the username is null or empty and display appropriate message
         if (username == null || username.isEmpty()) {
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
             buttonLogin.setVisibility(View.GONE);
             buttonSignup.setVisibility(View.GONE);
             buttonSignout.setVisibility(View.VISIBLE);
+            buttonAdvanture.setVisibility(View.VISIBLE);
         }
 
         // Set up button click listeners
@@ -83,11 +84,11 @@ public class MainActivity extends AppCompatActivity {
             // Signout logic
             username = null;
             password = null;
-            processing = 0;
             Toast.makeText(MainActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
             buttonLogin.setVisibility(View.VISIBLE);
             buttonSignup.setVisibility(View.VISIBLE);
             buttonSignout.setVisibility(View.GONE);
+            buttonAdvanture.setVisibility(View.GONE);
         });
 
         // Set up ViewPager2
@@ -108,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                if (position > processing) {
-                    Toast.makeText(MainActivity.this, "Need to complete level:" + (processing+1), Toast.LENGTH_LONG).show();
+                if (position+1 > processing && username != null) {
+                    Toast.makeText(MainActivity.this, "Need to complete level:" + processing, Toast.LENGTH_LONG).show();
                 } else {
                     Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
-                    gameIntent.putExtra("level", position);
+                    gameIntent.putExtra("level", position+1);
                     startActivity(gameIntent);
                 }
             }
@@ -124,7 +125,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
                 Random random = new Random();
-                gameIntent.putExtra("level", random.nextInt(images.size()));
+                gameIntent.putExtra("level", random.nextInt(images.size())+1);
+                startActivity(gameIntent);
+            }
+        });
+
+        // advanture
+        buttonAdvanture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
+                gameIntent.putExtra("level", processing);
                 startActivity(gameIntent);
             }
         });

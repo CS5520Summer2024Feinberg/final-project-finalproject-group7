@@ -1,5 +1,6 @@
 package edu.neu.pixelpainter;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +29,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         // Get the level from the intent
-        level = getIntent().getIntExtra("level", 0);
+        level = getIntent().getIntExtra("level", 1);
         Log.i("onCreate",String.valueOf(level));
         pixelCanvasView = findViewById(R.id.pixelCanvas);
         pixelCanvasView.setLevel(level);
@@ -73,8 +74,17 @@ public class GameActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int correctCount = pixelCanvasView.getCorrectColorCount(colorNumbers, colors);
-                Toast.makeText(GameActivity.this, "Correctly colored pixels: " + correctCount, Toast.LENGTH_SHORT).show();
+                float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
+                if (correctRatio >= 0.9){
+                    Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
+                    Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
+                    gameIntent.putExtra("level", level+1);
+                    startActivity(gameIntent);
+
+                }else {
+                    Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -84,7 +94,7 @@ public class GameActivity extends AppCompatActivity {
 
             pixelCanvasView.setSelectedColor(selectedColor);
             pixelCanvasView.setEraseMode(eraseMode);
-            pixelCanvasView.setLevel(savedInstanceState.getInt(KEY_LEVEL, 0));
+            pixelCanvasView.setLevel(savedInstanceState.getInt(KEY_LEVEL, 1));
 
             if (eraseMode) {
                 colorDisplay.setBackgroundResource(R.drawable.erase);
@@ -93,7 +103,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
-        Toast.makeText(this, "Welcome to Level " + (level + 1), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Welcome to Level " + level, Toast.LENGTH_SHORT).show();
 
 
     }

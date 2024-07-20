@@ -171,19 +171,24 @@ public class PixelCanvasView extends View {
 
 
 
-    public int getCorrectColorCount(int[] colorNumbers, int[] colors) {
+    public float getCorrectColorRatio(int[] colorNumbers, int[] colors) {
+        int count = 0;
         int correctCount = 0;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 int pixelColor = pixels[i][j];
                 int backgroundNumber = backgroundNumbers[i][j];
+                if (backgroundNumber == 0){
+                    continue;
+                }
+                count ++;
                 int index = backgroundNumber - 1; // Background numbers are 1-based, array is 0-based
                 if (pixelColor == colors[index]) {
                     correctCount++;
                 }
             }
         }
-        return correctCount;
+        return correctCount/count;
     }
 
     @Override
