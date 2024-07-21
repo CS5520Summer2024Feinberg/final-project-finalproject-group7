@@ -75,6 +75,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
+                Log.i("correctRatio", String.valueOf(correctRatio));
                 if (correctRatio >= 0.9){
                     Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
                     Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
