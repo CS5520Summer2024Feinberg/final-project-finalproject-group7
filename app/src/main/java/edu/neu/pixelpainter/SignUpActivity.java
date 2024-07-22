@@ -62,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void signUp(String username, String password) {
         // Create a new user with a 'processing' field
-        User user = new User(password, 0); // Initialize with default processing value 0
+        User user = new User(password, 1); // Initialize with default processing value 0
         mDatabase.child("users").child(username).setValue(user).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show();

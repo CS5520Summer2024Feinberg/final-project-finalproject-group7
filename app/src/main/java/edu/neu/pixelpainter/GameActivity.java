@@ -3,6 +3,7 @@ package edu.neu.pixelpainter;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.util.Log;
@@ -10,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -19,10 +23,21 @@ public class GameActivity extends AppCompatActivity {
     private int[] colorNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Corresponding numbers for each color
     private boolean eraseMode = false;
     private int level;
+    private int MAXLEVEL = 3;
 
     private static final String KEY_ERASE_MODE = "erase_mode";
     private static final String KEY_SELECTED_COLOR = "selected_color";
     private static final String KEY_LEVEL = "level";
+    private void updateProcessingField(String username, int newLevel) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(username);
+        databaseReference.child("processing").setValue(newLevel).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(GameActivity.this, "Processing level updated!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(GameActivity.this, "Failed to update processing level.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,18 +91,49 @@ public class GameActivity extends AppCompatActivity {
             public void onClick(View v) {
                 float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
                 Log.i("correctRatio", String.valueOf(correctRatio));
-                if (correctRatio >= 0.9){
+                if (correctRatio >= 0.9) {
                     Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
-                    Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
-                    gameIntent.putExtra("level", level+1);
-                    startActivity(gameIntent);
+                    int newLevel = level + 1;
 
-                }else {
+                    // Update the processing field in Firebase if the username is not null and newLevel is greater than current processing
+                    String username = getIntent().getStringExtra("username");
+                    int currentProcessing = getIntent().getIntExtra("processing", 1);
+                    if (username != null && newLevel > currentProcessing) {
+                        updateProcessingField(username, newLevel);
+                    }
+
+                    if (level >= MAXLEVEL) {
+                        // Show congratulations message and return to previous menu
+                        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                        builder.setTitle("Congratulations")
+                                .setMessage("You have completed all levels!")
+                                .setPositiveButton("OK", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    // Return to previous menu
+                                    Intent mainMenuIntent = new Intent(GameActivity.this, MainActivity.class);
+                                    mainMenuIntent.putExtra("username", username);
+                                    mainMenuIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing);
+                                    startActivity(mainMenuIntent);
+                                    finish();
+                                })
+                                .show();
+                    } else {
+                        // Proceed to the next level
+                        Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
+                        gameIntent.putExtra("level", newLevel);
+                        gameIntent.putExtra("username", username); // Pass the username
+                        gameIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing); // Pass the updated processing value
+                        startActivity(gameIntent);
+                        finish();
+                    }
+                } else {
                     Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
+
+
+
 
         if (savedInstanceState != null) {
             eraseMode = savedInstanceState.getBoolean(KEY_ERASE_MODE, false);

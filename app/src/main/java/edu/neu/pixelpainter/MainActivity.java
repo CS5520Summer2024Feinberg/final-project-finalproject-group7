@@ -106,39 +106,47 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setAdapter(viewPagerAdapter);
 
         // ViewPager item click listener
+        // ViewPager item click listener
         viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                if (position+1 > processing && username != null) {
+                if (position + 1 > processing && username != null) {
                     Toast.makeText(MainActivity.this, "Need to complete level:" + processing, Toast.LENGTH_LONG).show();
                 } else {
                     Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
-                    gameIntent.putExtra("level", position+1);
+                    gameIntent.putExtra("level", position + 1);
+                    gameIntent.putExtra("username", username); // Pass username or null
+                    gameIntent.putExtra("processing", processing); // Pass the current processing value
                     startActivity(gameIntent);
                 }
             }
         });
 
-        // freestyle
+// Freestyle button click listener
         buttonFreestyle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
                 Random random = new Random();
-                gameIntent.putExtra("level", random.nextInt(images.size())+1);
+                gameIntent.putExtra("level", random.nextInt(images.size()) + 1);
+                gameIntent.putExtra("username", username); // Pass username or null
+                gameIntent.putExtra("processing", processing); // Pass the current processing value
                 startActivity(gameIntent);
             }
         });
 
-        // advanture
+// Adventure button click listener
         buttonAdvanture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
                 gameIntent.putExtra("level", processing);
+                gameIntent.putExtra("username", username); // Pass username or null
+                gameIntent.putExtra("processing", processing); // Pass the current processing value
                 startActivity(gameIntent);
             }
         });
+
 
     }
 }
