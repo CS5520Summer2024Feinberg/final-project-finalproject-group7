@@ -23,6 +23,7 @@ public class GameActivity extends AppCompatActivity {
     private int[] colorNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Corresponding numbers for each color
     private boolean eraseMode = false;
     private int level;
+    // the max level of the game. It is used for congrats the user after he pass the game
     private int MAXLEVEL = 3;
 
     private static final String KEY_ERASE_MODE = "erase_mode";
