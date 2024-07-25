@@ -1,8 +1,10 @@
 package edu.neu.pixelpainter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
+import android.os.Vibrator;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
@@ -23,12 +25,12 @@ public class GameActivity extends AppCompatActivity {
     private int[] colorNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Corresponding numbers for each color
     private boolean eraseMode = false;
     private int level;
-    // the max level of the game. It is used for congrats the user after he pass the game
-    private int MAXLEVEL = 3;
+    private static final int MAXLEVEL = 3;
 
     private static final String KEY_ERASE_MODE = "erase_mode";
     private static final String KEY_SELECTED_COLOR = "selected_color";
     private static final String KEY_LEVEL = "level";
+
     private void updateProcessingField(String username, int newLevel) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(username);
         databaseReference.child("processing").setValue(newLevel).addOnCompleteListener(task -> {
@@ -46,14 +48,12 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         // Get the level from the intent
         level = getIntent().getIntExtra("level", 1);
-        Log.i("onCreate",String.valueOf(level));
+        Log.i("onCreate", String.valueOf(level));
         pixelCanvasView = findViewById(R.id.pixelCanvas);
         pixelCanvasView.setLevel(level);
 
         colorDisplay = findViewById(R.id.colorDisplay);
         LinearLayout paletteLayout = findViewById(R.id.paletteLayout);
-
-
 
         for (int i = 0; i < colors.length; i++) {
             final int color = colors[i];
@@ -65,76 +65,74 @@ public class GameActivity extends AppCompatActivity {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100); // Fixed size for buttons
             params.setMargins(10, 10, 10, 10); // Margin around buttons
             colorButton.setLayoutParams(params);
-            colorButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    pixelCanvasView.setSelectedColor(color);
-                    colorDisplay.setBackgroundColor(color);
-                    pixelCanvasView.setEraseMode(false);
-                }
+            colorButton.setOnClickListener(v -> {
+                pixelCanvasView.setSelectedColor(color);
+                colorDisplay.setBackgroundColor(color);
+                pixelCanvasView.setEraseMode(false);
             });
             paletteLayout.addView(colorButton);
         }
 
         Button eraseButton = findViewById(R.id.eraseButton);
-        eraseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                eraseMode = true;
-                pixelCanvasView.setEraseMode(true);
-                colorDisplay.setBackgroundResource(R.drawable.erase);
-            }
+        eraseButton.setOnClickListener(v -> {
+            eraseMode = true;
+            pixelCanvasView.setEraseMode(true);
+            colorDisplay.setBackgroundResource(R.drawable.erase);
         });
 
         Button saveButton = findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
-                Log.i("correctRatio", String.valueOf(correctRatio));
-                if (correctRatio >= 0.9) {
-                    Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
-                    int newLevel = level + 1;
+        saveButton.setOnClickListener(v -> {
+            float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
+            Log.i("correctRatio", String.valueOf(correctRatio));
+            if (correctRatio >= 0.9) {
+                Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
+                int newLevel = level + 1;
 
-                    // Update the processing field in Firebase if the username is not null and newLevel is greater than current processing
-                    String username = getIntent().getStringExtra("username");
-                    int currentProcessing = getIntent().getIntExtra("processing", 1);
-                    if (username != null && newLevel > currentProcessing) {
-                        updateProcessingField(username, newLevel);
-                    }
+                // Update the processing field in Firebase if the username is not null and newLevel is greater than current processing
+                String username = getIntent().getStringExtra("username");
+                int currentProcessing = getIntent().getIntExtra("processing", 1);
+                if (username != null && newLevel > currentProcessing) {
+                    updateProcessingField(username, newLevel);
+                }
 
-                    if (level >= MAXLEVEL) {
-                        // Show congratulations message and return to previous menu
-                        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
-                        builder.setTitle("Congratulations")
-                                .setMessage("You have completed all levels!")
-                                .setPositiveButton("OK", (dialog, which) -> {
-                                    dialog.dismiss();
-                                    // Return to previous menu
-                                    Intent mainMenuIntent = new Intent(GameActivity.this, MainActivity.class);
-                                    mainMenuIntent.putExtra("username", username);
-                                    mainMenuIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing);
-                                    startActivity(mainMenuIntent);
-                                    finish();
-                                })
-                                .show();
-                    } else {
-                        // Proceed to the next level
-                        Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
-                        gameIntent.putExtra("level", newLevel);
-                        gameIntent.putExtra("username", username); // Pass the username
-                        gameIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing); // Pass the updated processing value
-                        startActivity(gameIntent);
-                        finish();
-                    }
+                if (level >= MAXLEVEL) {
+                    // Show congratulations message and return to previous menu
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                    builder.setTitle("Congratulations")
+                            .setMessage("You have completed all levels!")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                // Return to previous menu
+                                Intent mainMenuIntent = new Intent(GameActivity.this, MainActivity.class);
+                                mainMenuIntent.putExtra("username", username);
+                                mainMenuIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing);
+                                startActivity(mainMenuIntent);
+                                finish();
+                            })
+                            .show();
                 } else {
-                    Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
+                    // Proceed to the next level
+                    Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
+                    gameIntent.putExtra("level", newLevel);
+                    gameIntent.putExtra("username", username); // Pass the username
+                    gameIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing); // Pass the updated processing value
+                    startActivity(gameIntent);
+                    finish();
+                }
+            } else {
+                Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
+
+                // Add this block to handle vibration
+                SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
+                boolean isVibrationEnabled = preferences.getBoolean("vibration", false);
+                if (isVibrationEnabled) {
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vibrator != null && vibrator.hasVibrator()) {
+                        vibrator.vibrate(500); // Vibrate for 500 milliseconds
+                    }
                 }
             }
         });
-
-
-
 
         if (savedInstanceState != null) {
             eraseMode = savedInstanceState.getBoolean(KEY_ERASE_MODE, false);
@@ -153,7 +151,12 @@ public class GameActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Welcome to Level " + level, Toast.LENGTH_SHORT).show();
 
-
+        // Add this block to handle background music
+        SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
+        boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
+        if (isMusicEnabled) {
+            startService(new Intent(this, MusicService.class));
+        }
     }
 
     @Override
@@ -162,6 +165,18 @@ public class GameActivity extends AppCompatActivity {
         outState.putBoolean(KEY_ERASE_MODE, eraseMode);
         outState.putInt(KEY_SELECTED_COLOR, pixelCanvasView.getSelectedColor());
         outState.putInt(KEY_LEVEL, pixelCanvasView.getLevel());
+    }
 
+    // Add these methods to stop the music service when the activity is paused or stopped
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopService(new Intent(this, MusicService.class));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopService(new Intent(this, MusicService.class));
     }
 }

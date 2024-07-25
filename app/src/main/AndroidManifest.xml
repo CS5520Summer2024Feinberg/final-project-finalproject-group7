@@ -21,6 +21,7 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -30,6 +31,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Declare the MusicService -->
+        <service android:name=".MusicService" android:exported="false" />
     </application>
+
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
 </manifest>

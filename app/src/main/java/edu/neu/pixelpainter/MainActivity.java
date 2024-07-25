@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonAdvanture;
 
     private Button buttonFreestyle;
+    private Button buttonSettings;
 
     private String username;
     private String password;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSignout = findViewById(R.id.button_signout);
         buttonAdvanture = findViewById(R.id.button_adventure_mode);
         buttonFreestyle = findViewById(R.id.button_freestyle_mode);
+        buttonSettings = findViewById(R.id.button_settings);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -146,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(gameIntent);
             }
         });
+
+        buttonSettings.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
 
 
     }
