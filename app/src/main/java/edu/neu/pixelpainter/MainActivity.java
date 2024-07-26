@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager2;
     private ViewPagerAdapter viewPagerAdapter;
-
+    private int maxLevel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<Integer> images = Arrays.asList(R.drawable.a, R.drawable.b, R.drawable.c);
         List<String> headlines = Arrays.asList("Level1:Ice Cream", "Level2:Love", "Level3:Frog");
-
+        maxLevel = headlines.size();
         List<ViewPagerItem> viewPagerArrayList = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             ViewPagerItem viewPagerItem = new ViewPagerItem(images.get(i), headlines.get(i));
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setAdapter(viewPagerAdapter);
 
         // ViewPager item click listener
-        // ViewPager item click listener
+
         viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -121,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
                     gameIntent.putExtra("level", position + 1);
                     gameIntent.putExtra("username", username); // Pass username or null
                     gameIntent.putExtra("processing", processing); // Pass the current processing value
+                    gameIntent.putExtra("maxLevel", maxLevel);
+                    gameIntent.putExtra("isFreestyle", false);
                     startActivity(gameIntent);
                 }
             }
@@ -135,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
                 gameIntent.putExtra("level", random.nextInt(images.size()) + 1);
                 gameIntent.putExtra("username", username); // Pass username or null
                 gameIntent.putExtra("processing", processing); // Pass the current processing value
+                gameIntent.putExtra("maxLevel", maxLevel);
+                gameIntent.putExtra("isFreestyle", true);
                 startActivity(gameIntent);
             }
         });
@@ -147,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
                 gameIntent.putExtra("level", processing);
                 gameIntent.putExtra("username", username); // Pass username or null
                 gameIntent.putExtra("processing", processing); // Pass the current processing value
+                gameIntent.putExtra("maxLevel", maxLevel);
+                gameIntent.putExtra("isFreestyle", false);
                 startActivity(gameIntent);
             }
         });

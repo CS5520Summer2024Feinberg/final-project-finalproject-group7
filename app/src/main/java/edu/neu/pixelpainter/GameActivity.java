@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Random;
+
 public class GameActivity extends AppCompatActivity {
 
     private PixelCanvasView pixelCanvasView;
@@ -26,14 +28,13 @@ public class GameActivity extends AppCompatActivity {
     private int[] colorNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Corresponding numbers for each color
     private boolean eraseMode = false;
     private int level;
-    private static final int MAXLEVEL = 3;
     private String username;
 
     private int processing;
     private static final String KEY_ERASE_MODE = "erase_mode";
     private static final String KEY_SELECTED_COLOR = "selected_color";
     private static final String KEY_LEVEL = "level";
-
+    private boolean isFreestyle;
     private void updateProcessingField(String username, int newLevel) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(username);
         databaseReference.child("processing").setValue(newLevel);
@@ -55,6 +56,9 @@ public class GameActivity extends AppCompatActivity {
         level = intent.getIntExtra("level", 1);
         username = intent.getStringExtra("username");
         processing = intent.getIntExtra("processing", 1);
+        int maxLevel = intent.getIntExtra("maxLevel", 3);
+        boolean isFreestyle = intent.getBooleanExtra("isFreestyle", false);
+
         Log.i("onCreate", String.valueOf(level));
         pixelCanvasView = findViewById(R.id.pixelCanvas);
         pixelCanvasView.setLevel(level);
@@ -94,8 +98,7 @@ public class GameActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> {
             float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
             Log.i("correctRatio", String.valueOf(correctRatio));
-            if (correctRatio >= 0.9) {
-//                Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
+            if (correctRatio >= 0.01) {
                 int newLevel = level + 1;
 
                 // Update the processing field in Firebase if the username is not null and newLevel is greater than current processing
@@ -107,7 +110,7 @@ public class GameActivity extends AppCompatActivity {
                     updateProcessingField(username, newLevel);
                 }
 
-                if (level >= MAXLEVEL) {
+                if (newLevel > maxLevel && !isFreestyle) {
                     // Show congratulations message and return to previous menu
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
                     builder.setTitle("Congratulations")
@@ -123,11 +126,13 @@ public class GameActivity extends AppCompatActivity {
                             })
                             .show();
                 } else {
-                    // Proceed to the next level
+                    // Proceed to the next level or random level in freestyle mode
                     Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
-                    gameIntent.putExtra("level", newLevel);
+                    gameIntent.putExtra("level", isFreestyle ? new Random().nextInt(maxLevel) + 1 : newLevel);
                     gameIntent.putExtra("username", username); // Pass the username
                     gameIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing); // Pass the updated processing value
+                    gameIntent.putExtra("maxLevel", maxLevel); // passing the max level of the game
+                    gameIntent.putExtra("isFreestyle", isFreestyle); // passing the boolean is this a freestyle mode
                     startActivity(gameIntent);
                     finish();
                 }
