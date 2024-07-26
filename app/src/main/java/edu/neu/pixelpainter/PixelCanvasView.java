@@ -35,6 +35,9 @@ public class PixelCanvasView extends View {
 
     private int level;
 
+    private long downTime;
+    private static final long CLICK_THRESHOLD = 500; // Threshold for a click in milliseconds
+
     public PixelCanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -97,53 +100,75 @@ public class PixelCanvasView extends View {
         int height = getHeight();
         int pixelSize = Math.min(width, height) / gridSize;
 
+        // Centering calculations
+        int offsetX = (width - pixelSize * gridSize) / 2;
+        int offsetY = (height - pixelSize * gridSize) / 2;
+
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 paint.setColor(pixels[i][j]);
-                Rect rect = new Rect(i * pixelSize, j * pixelSize, (i + 1) * pixelSize, (j + 1) * pixelSize);
+                Rect rect = new Rect(
+                        offsetX + i * pixelSize,
+                        offsetY + j * pixelSize,
+                        offsetX + (i + 1) * pixelSize,
+                        offsetY + (j + 1) * pixelSize
+                );
                 canvas.drawRect(rect, paint);
 
                 // Draw border
                 canvas.drawRect(rect, borderPaint);
 
                 // Draw number
-//                if (pixels[i][j] == 0) { // Only draw number if the pixel is not colored
-                if (backgroundNumbers[i][j] != 0){
-                    canvas.drawText(String.valueOf(backgroundNumbers[i][j]),
-                            (i + 0.5f) * pixelSize,
-                            (j + 0.75f) * pixelSize,
-                            textPaint);
+                if (backgroundNumbers[i][j] != 0) {
+                    canvas.drawText(
+                            String.valueOf(backgroundNumbers[i][j]),
+                            offsetX + (i + 0.5f) * pixelSize,
+                            offsetY + (j + 0.75f) * pixelSize,
+                            textPaint
+                    );
                 }
-
-//                }
             }
         }
     }
 
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
-            int width = getWidth();
-            int height = getHeight();
-            int pixelSize = Math.min(width, height) / gridSize;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downTime = System.currentTimeMillis();
+                return true;
 
-            int x = (int) (event.getX() / pixelSize);
-            int y = (int) (event.getY() / pixelSize);
+            case MotionEvent.ACTION_UP:
+                long upTime = System.currentTimeMillis();
+                if (upTime - downTime < CLICK_THRESHOLD) {
+                    // This is a click
+                    int width = getWidth();
+                    int height = getHeight();
+                    int pixelSize = Math.min(width, height) / gridSize;
 
-            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
-                if (eraseMode) {
-                    pixels[x][y] = 0; // Reset to default (show number)
-                } else {
-                    if (selectedColor == Color.WHITE){
-                        Toast.makeText(PixelCanvasView.this.getContext(), "Please select a color.", Toast.LENGTH_SHORT).show();
-                    }else {
-                        pixels[x][y] = selectedColor;
+                    int x = (int) (event.getX() / pixelSize);
+                    int y = (int) (event.getY() / pixelSize);
+
+                    if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                        if (eraseMode) {
+                            pixels[x][y] = 0; // Reset to default (show number)
+                        } else {
+                            if (selectedColor == Color.WHITE) {
+                                Toast.makeText(PixelCanvasView.this.getContext(), "Please select a color.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                pixels[x][y] = selectedColor;
+                            }
+                        }
+                        invalidate();
                     }
-
+                    return true;
                 }
-                invalidate();
-            }
-            return true;
+                break;
+
+            default:
+                break;
         }
         return false;
     }
@@ -213,6 +238,8 @@ public class PixelCanvasView extends View {
         pixels = savedState.pixels;
         invalidate();
     }
+
+
 
     static class SavedState extends BaseSavedState {
         int[][] pixels;

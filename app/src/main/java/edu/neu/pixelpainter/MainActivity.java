@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSettings;
 
     private String username;
+
     private String password;
+
     private int processing;
 
     private ViewPager2 viewPager2;
@@ -63,30 +65,30 @@ public class MainActivity extends AppCompatActivity {
         password = intent.getStringExtra("password");
         processing = intent.getIntExtra("processing", 1);
 
-        // Check if the username is null or empty and display appropriate message
-        if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Please log in for a better experience", Toast.LENGTH_SHORT).show();
-            buttonLogin.setVisibility(View.VISIBLE);
-            buttonSignup.setVisibility(View.VISIBLE);
-            buttonSignout.setVisibility(View.GONE);
-            buttonAdvanture.setVisibility(View.GONE);
 
-        } else {
-            Toast.makeText(this, "Welcome, " + username, Toast.LENGTH_SHORT).show();
-            buttonLogin.setVisibility(View.GONE);
-            buttonSignup.setVisibility(View.GONE);
-            buttonSignout.setVisibility(View.VISIBLE);
-            buttonAdvanture.setVisibility(View.VISIBLE);
+
+        // Check if the username is null or empty and display appropriate message
+        boolean isLoggedIn = username != null && !username.isEmpty();
+
+        // password != null when previous activity is login
+        if (password != null) {
+            Toast.makeText(this, isLoggedIn ? "Welcome, " + username : "Please log in for a better experience", Toast.LENGTH_SHORT).show();
         }
+
+        buttonLogin.setVisibility(isLoggedIn ? View.GONE : View.VISIBLE);
+        buttonSignup.setVisibility(isLoggedIn ? View.GONE : View.VISIBLE);
+        buttonSignout.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
+        buttonAdvanture.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
+
+
 
         // Set up button click listeners
         buttonLogin.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
         buttonSignup.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SignUpActivity.class)));
         buttonSignout.setOnClickListener(view -> {
             // Signout logic
+            Toast.makeText(MainActivity.this, "Goodbye, "+username, Toast.LENGTH_SHORT).show();
             username = null;
-            password = null;
-            Toast.makeText(MainActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
             buttonLogin.setVisibility(View.VISIBLE);
             buttonSignup.setVisibility(View.VISIBLE);
             buttonSignout.setVisibility(View.GONE);

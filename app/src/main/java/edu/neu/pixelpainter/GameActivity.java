@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
@@ -26,20 +27,23 @@ public class GameActivity extends AppCompatActivity {
     private boolean eraseMode = false;
     private int level;
     private static final int MAXLEVEL = 3;
+    private String username;
 
+    private int processing;
     private static final String KEY_ERASE_MODE = "erase_mode";
     private static final String KEY_SELECTED_COLOR = "selected_color";
     private static final String KEY_LEVEL = "level";
 
     private void updateProcessingField(String username, int newLevel) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(username);
-        databaseReference.child("processing").setValue(newLevel).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(GameActivity.this, "Processing level updated!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(GameActivity.this, "Failed to update processing level.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        databaseReference.child("processing").setValue(newLevel);
+//                .addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                Toast.makeText(GameActivity.this, "Processing level updated!", Toast.LENGTH_SHORT).show();
+//            } else {
+//                Toast.makeText(GameActivity.this, "Failed to update processing level.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Override
@@ -47,12 +51,18 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         // Get the level from the intent
-        level = getIntent().getIntExtra("level", 1);
+        Intent intent = getIntent();
+        level = intent.getIntExtra("level", 1);
+        username = intent.getStringExtra("username");
+        processing = intent.getIntExtra("processing", 1);
         Log.i("onCreate", String.valueOf(level));
         pixelCanvasView = findViewById(R.id.pixelCanvas);
         pixelCanvasView.setLevel(level);
 
         colorDisplay = findViewById(R.id.colorDisplay);
+
+        TextView tv = findViewById(R.id.level);
+        tv.setText("Level: " + level);
         LinearLayout paletteLayout = findViewById(R.id.paletteLayout);
 
         for (int i = 0; i < colors.length; i++) {
@@ -85,12 +95,14 @@ public class GameActivity extends AppCompatActivity {
             float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
             Log.i("correctRatio", String.valueOf(correctRatio));
             if (correctRatio >= 0.9) {
-                Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(GameActivity.this, "Pass!", Toast.LENGTH_SHORT).show();
                 int newLevel = level + 1;
 
                 // Update the processing field in Firebase if the username is not null and newLevel is greater than current processing
                 String username = getIntent().getStringExtra("username");
                 int currentProcessing = getIntent().getIntExtra("processing", 1);
+                Log.i("newLevel", String.valueOf(newLevel));
+                Log.i("currentProcessing", String.valueOf(currentProcessing));
                 if (username != null && newLevel > currentProcessing) {
                     updateProcessingField(username, newLevel);
                 }
@@ -149,7 +161,8 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
-        Toast.makeText(this, "Welcome to Level " + level, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Welcome to Level " + level, Toast.LENGTH_SHORT).show();
+
 
         // Add this block to handle background music
         SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
@@ -179,4 +192,18 @@ public class GameActivity extends AppCompatActivity {
         super.onStop();
         stopService(new Intent(this, MusicService.class));
     }
+
+    @Override
+    public void onBackPressed() {
+        // Create a new Intent to launch GameActivity
+        Intent intent = new Intent(GameActivity.this, MainActivity.class);
+        intent.putExtra("username", username); // Pass the username
+        intent.putExtra("processing", processing); // Pass the updated processing value
+
+        // Start the new activity
+        startActivity(intent);
+        // Optionally, you can call the super method if you want the default back button behavior
+        super.onBackPressed();
+    }
+
 }

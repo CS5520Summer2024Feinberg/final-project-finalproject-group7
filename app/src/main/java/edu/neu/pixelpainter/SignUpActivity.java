@@ -66,7 +66,11 @@ public class SignUpActivity extends AppCompatActivity {
         mDatabase.child("users").child(username).setValue(user).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show();
-                finish();
+                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                intent.putExtra("username", username); // Pass the username
+                intent.putExtra("processing", 1); // Pass the updated processing value
+                // Start the new activity
+                startActivity(intent);
             } else {
                 Toast.makeText(this, "Sign up failed", Toast.LENGTH_SHORT).show();
             }

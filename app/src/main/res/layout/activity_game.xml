@@ -29,29 +29,53 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="8dp"
         android:gravity="center">
+
+        <TextView
+            android:id="@+id/level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_marginEnd="8dp" />
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Selected Color: "
-            android:textSize="18sp"
-            android:layout_marginEnd="16dp" />
+            android:textSize="10sp"
+            android:layout_marginEnd="8dp" />
 
         <View
             android:id="@+id/colorDisplay"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="#FFFFFF"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
-    <edu.neu.pixelpainter.PixelCanvasView
-        android:id="@+id/pixelCanvas"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp" />
+        android:paddingBottom="16dp">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <edu.neu.pixelpainter.PixelCanvasView
+                    android:id="@+id/pixelCanvas"
+                    android:layout_width="800dp"
+                    android:layout_height="800dp" />
+            </FrameLayout>
+
+        </HorizontalScrollView>
+
+
+    </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
