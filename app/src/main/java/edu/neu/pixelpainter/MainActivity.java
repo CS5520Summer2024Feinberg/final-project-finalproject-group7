@@ -1,6 +1,7 @@
 package edu.neu.pixelpainter;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     private ViewPagerAdapter viewPagerAdapter;
     private int maxLevel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
         password = intent.getStringExtra("password");
         processing = intent.getIntExtra("processing", 1);
 
-
-
         // Check if the username is null or empty and display appropriate message
         boolean isLoggedIn = username != null && !username.isEmpty();
 
@@ -80,14 +80,12 @@ public class MainActivity extends AppCompatActivity {
         buttonSignout.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
         buttonAdvanture.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
 
-
-
         // Set up button click listeners
         buttonLogin.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
         buttonSignup.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SignUpActivity.class)));
         buttonSignout.setOnClickListener(view -> {
             // Signout logic
-            Toast.makeText(MainActivity.this, "Goodbye, "+username, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Goodbye, " + username, Toast.LENGTH_SHORT).show();
             username = null;
             buttonLogin.setVisibility(View.VISIBLE);
             buttonSignup.setVisibility(View.VISIBLE);
@@ -110,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setAdapter(viewPagerAdapter);
 
         // ViewPager item click listener
-
         viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -123,42 +120,43 @@ public class MainActivity extends AppCompatActivity {
                     gameIntent.putExtra("processing", processing); // Pass the current processing value
                     gameIntent.putExtra("maxLevel", maxLevel);
                     gameIntent.putExtra("isFreestyle", false);
+                    SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
+                    boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
+                    gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
                     startActivity(gameIntent);
                 }
             }
         });
 
-// Freestyle button click listener
-        buttonFreestyle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
-                Random random = new Random();
-                gameIntent.putExtra("level", random.nextInt(images.size()) + 1);
-                gameIntent.putExtra("username", username); // Pass username or null
-                gameIntent.putExtra("processing", processing); // Pass the current processing value
-                gameIntent.putExtra("maxLevel", maxLevel);
-                gameIntent.putExtra("isFreestyle", true);
-                startActivity(gameIntent);
-            }
+        // Freestyle button click listener
+        buttonFreestyle.setOnClickListener(v -> {
+            Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
+            Random random = new Random();
+            gameIntent.putExtra("level", random.nextInt(images.size()) + 1);
+            gameIntent.putExtra("username", username); // Pass username or null
+            gameIntent.putExtra("processing", processing); // Pass the current processing value
+            gameIntent.putExtra("maxLevel", maxLevel);
+            gameIntent.putExtra("isFreestyle", true);
+            SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
+            boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
+            gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
+            startActivity(gameIntent);
         });
 
-// Adventure button click listener
-        buttonAdvanture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
-                gameIntent.putExtra("level", processing);
-                gameIntent.putExtra("username", username); // Pass username or null
-                gameIntent.putExtra("processing", processing); // Pass the current processing value
-                gameIntent.putExtra("maxLevel", maxLevel);
-                gameIntent.putExtra("isFreestyle", false);
-                startActivity(gameIntent);
-            }
+        // Adventure button click listener
+        buttonAdvanture.setOnClickListener(v -> {
+            Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
+            gameIntent.putExtra("level", processing);
+            gameIntent.putExtra("username", username); // Pass username or null
+            gameIntent.putExtra("processing", processing); // Pass the current processing value
+            gameIntent.putExtra("maxLevel", maxLevel);
+            gameIntent.putExtra("isFreestyle", false);
+            SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
+            boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
+            gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
+            startActivity(gameIntent);
         });
 
         buttonSettings.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
-
-
     }
 }

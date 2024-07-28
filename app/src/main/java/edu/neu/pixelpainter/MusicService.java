@@ -3,16 +3,18 @@ package edu.neu.pixelpainter;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 public class MusicService extends Service {
     private MediaPlayer mediaPlayer;
+    private final IBinder musicBinder = new MusicBinder();
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return musicBinder;
     }
 
     @Override
@@ -32,5 +34,11 @@ public class MusicService extends Service {
             mediaPlayer.release();
         }
         super.onDestroy();
+    }
+
+    public class MusicBinder extends Binder {
+        MusicService getService() {
+            return MusicService.this;
+        }
     }
 }

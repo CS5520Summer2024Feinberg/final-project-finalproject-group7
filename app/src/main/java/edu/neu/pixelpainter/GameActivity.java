@@ -1,9 +1,12 @@
 package edu.neu.pixelpainter;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Vibrator;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,40 +34,52 @@ public class GameActivity extends AppCompatActivity {
     private String username;
 
     private int processing;
+    private boolean isMusicEnabled;
     private static final String KEY_ERASE_MODE = "erase_mode";
     private static final String KEY_SELECTED_COLOR = "selected_color";
     private static final String KEY_LEVEL = "level";
     private boolean isFreestyle;
+    private MusicService musicService;
+    private boolean isBound = false;
+
+    private ServiceConnection musicConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            musicService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
+
     private void updateProcessingField(String username, int newLevel) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(username);
         databaseReference.child("processing").setValue(newLevel);
-//                .addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                Toast.makeText(GameActivity.this, "Processing level updated!", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(GameActivity.this, "Failed to update processing level.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
         // Get the level from the intent
         Intent intent = getIntent();
         level = intent.getIntExtra("level", 1);
         username = intent.getStringExtra("username");
         processing = intent.getIntExtra("processing", 1);
         int maxLevel = intent.getIntExtra("maxLevel", 3);
-        boolean isFreestyle = intent.getBooleanExtra("isFreestyle", false);
+        isFreestyle = intent.getBooleanExtra("isFreestyle", false);
+        isMusicEnabled = intent.getBooleanExtra("isMusicEnabled", false);
 
         Log.i("onCreate", String.valueOf(level));
         pixelCanvasView = findViewById(R.id.pixelCanvas);
         pixelCanvasView.setLevel(level);
 
         colorDisplay = findViewById(R.id.colorDisplay);
-
         TextView tv = findViewById(R.id.level);
         tv.setText("Level: " + level);
         LinearLayout paletteLayout = findViewById(R.id.paletteLayout);
@@ -102,11 +117,7 @@ public class GameActivity extends AppCompatActivity {
                 int newLevel = level + 1;
 
                 // Update the processing field in Firebase if the username is not null and newLevel is greater than current processing
-                String username = getIntent().getStringExtra("username");
-                int currentProcessing = getIntent().getIntExtra("processing", 1);
-                Log.i("newLevel", String.valueOf(newLevel));
-                Log.i("currentProcessing", String.valueOf(currentProcessing));
-                if (username != null && newLevel > currentProcessing) {
+                if (username != null && newLevel > processing) {
                     updateProcessingField(username, newLevel);
                 }
 
@@ -120,7 +131,8 @@ public class GameActivity extends AppCompatActivity {
                                 // Return to previous menu
                                 Intent mainMenuIntent = new Intent(GameActivity.this, MainActivity.class);
                                 mainMenuIntent.putExtra("username", username);
-                                mainMenuIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing);
+                                mainMenuIntent.putExtra("processing", newLevel > processing ? newLevel : processing);
+                                mainMenuIntent.putExtra("isMusicEnabled", isMusicEnabled);
                                 startActivity(mainMenuIntent);
                                 finish();
                             })
@@ -130,9 +142,10 @@ public class GameActivity extends AppCompatActivity {
                     Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
                     gameIntent.putExtra("level", isFreestyle ? new Random().nextInt(maxLevel) + 1 : newLevel);
                     gameIntent.putExtra("username", username); // Pass the username
-                    gameIntent.putExtra("processing", newLevel > currentProcessing ? newLevel : currentProcessing); // Pass the updated processing value
+                    gameIntent.putExtra("processing", newLevel > processing ? newLevel : processing); // Pass the updated processing value
                     gameIntent.putExtra("maxLevel", maxLevel); // passing the max level of the game
                     gameIntent.putExtra("isFreestyle", isFreestyle); // passing the boolean is this a freestyle mode
+                    gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
                     startActivity(gameIntent);
                     finish();
                 }
@@ -166,14 +179,11 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
-//        Toast.makeText(this, "Welcome to Level " + level, Toast.LENGTH_SHORT).show();
-
-
         // Add this block to handle background music
-        SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
-        boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
         if (isMusicEnabled) {
-            startService(new Intent(this, MusicService.class));
+            Intent musicIntent = new Intent(this, MusicService.class);
+            bindService(musicIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(musicIntent);
         }
     }
 
@@ -185,30 +195,36 @@ public class GameActivity extends AppCompatActivity {
         outState.putInt(KEY_LEVEL, pixelCanvasView.getLevel());
     }
 
-    // Add these methods to stop the music service when the activity is paused or stopped
     @Override
-    protected void onPause() {
-        super.onPause();
-        stopService(new Intent(this, MusicService.class));
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isBound) {
+            unbindService(musicConnection);
+            isBound = false;
+        }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
+        if (isBound) {
+            unbindService(musicConnection);
+            isBound = false;
+        }
         stopService(new Intent(this, MusicService.class));
     }
 
     @Override
     public void onBackPressed() {
-        // Create a new Intent to launch GameActivity
+        // Create a new Intent to launch MainActivity
         Intent intent = new Intent(GameActivity.this, MainActivity.class);
         intent.putExtra("username", username); // Pass the username
         intent.putExtra("processing", processing); // Pass the updated processing value
+        intent.putExtra("isMusicEnabled", isMusicEnabled); // Pass the music setting
 
         // Start the new activity
         startActivity(intent);
         // Optionally, you can call the super method if you want the default back button behavior
         super.onBackPressed();
     }
-
 }
