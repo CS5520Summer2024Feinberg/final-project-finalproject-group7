@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager2 = findViewById(R.id.viewPager);
 
         List<Integer> images = Arrays.asList(R.drawable.ice, R.drawable.love, R.drawable.alien,R.drawable.fog,R.drawable.mushroom,R.drawable.ghost);
-        List<String> headlines = Arrays.asList("Level1:Ice", "Level2:Love", "Level3:Align","Level4:Fog","Level5:Mushroom","Level5:Ghost");
+        List<String> headlines = Arrays.asList("Level1:Ice", "Level2:Love", "Level3:Align","Level4:Fog","Level5:Mushroom","Level6:Ghost");
         maxLevel = headlines.size();
         List<ViewPagerItem> viewPagerArrayList = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
