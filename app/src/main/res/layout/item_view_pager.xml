@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.85"
-        android:src="@drawable/a"
+        android:src="@drawable/ice"
         />
 
     <TextView

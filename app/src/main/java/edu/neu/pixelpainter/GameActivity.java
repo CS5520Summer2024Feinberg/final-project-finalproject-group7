@@ -27,7 +27,7 @@ public class GameActivity extends AppCompatActivity {
 
     private PixelCanvasView pixelCanvasView;
     private View colorDisplay;
-    private int[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA, Color.LTGRAY, Color.DKGRAY, Color.BLACK, Color.GRAY};
+    private int[] colors = {Color.RED, 0xFF21e01f, Color.BLUE, 0xFFebb914, Color.CYAN, 0xFFdc939d, Color.LTGRAY, Color.DKGRAY, Color.BLACK, Color.GRAY};
     private int[] colorNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Corresponding numbers for each color
     private boolean eraseMode = false;
     private int level;
