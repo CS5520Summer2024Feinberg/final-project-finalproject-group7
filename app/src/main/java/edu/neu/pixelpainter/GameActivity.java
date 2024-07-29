@@ -221,6 +221,7 @@ public class GameActivity extends AppCompatActivity {
         intent.putExtra("username", username); // Pass the username
         intent.putExtra("processing", processing); // Pass the updated processing value
         intent.putExtra("isMusicEnabled", isMusicEnabled); // Pass the music setting
+        intent.putExtra("level", level);
 
         // Start the new activity
         startActivity(intent);

@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int processing;
 
+    private int level;
+
     private ViewPager2 viewPager2;
     private ViewPagerAdapter viewPagerAdapter;
     private int maxLevel;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
         processing = intent.getIntExtra("processing", 1);
-
+        level = intent.getIntExtra("level", 1);
         // Check if the username is null or empty and display appropriate message
         boolean isLoggedIn = username != null && !username.isEmpty();
 
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         }
         viewPagerAdapter = new ViewPagerAdapter(viewPagerArrayList);
         viewPager2.setAdapter(viewPagerAdapter);
+        viewPager2.setCurrentItem(level -1 );
 
         // ViewPager item click listener
         viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
