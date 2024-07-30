@@ -1,5 +1,6 @@
 package edu.neu.pixelpainter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -112,11 +114,39 @@ public class MainActivity extends AppCompatActivity {
 
         // ViewPager item click listener
         viewPagerAdapter.setOnItemClickListener(new ViewPagerAdapter.OnItemClickListener() {
+            //determine if login user can play this level
             @Override
             public void onItemClick(int position) {
                 if (position + 1 > processing && username != null) {
-                    Toast.makeText(MainActivity.this, "Need to complete level:" + processing, Toast.LENGTH_LONG).show();
-                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Level Incomplete");
+                    builder.setMessage("You need to complete level"+ String.valueOf(processing) + "to proceed.");
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                // user not login can only play level 1
+                else if ( username == null  &&  position >=1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Login Required");
+                    builder.setMessage("You need to log in to proceed.");
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else {
                     Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
                     gameIntent.putExtra("level", position + 1);
                     gameIntent.putExtra("username", username); // Pass username or null
