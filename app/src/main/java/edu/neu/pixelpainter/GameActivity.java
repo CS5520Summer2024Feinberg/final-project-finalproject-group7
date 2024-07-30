@@ -2,6 +2,7 @@ package edu.neu.pixelpainter;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -111,6 +112,32 @@ public class GameActivity extends AppCompatActivity {
 
         Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(v -> {
+            if (username == null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                builder.setTitle("Login Required");
+                builder.setMessage("Please login to continue.");
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(GameActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+            }
+
+
             float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
             Log.i("correctRatio", String.valueOf(correctRatio));
             if (correctRatio >= 0.01) {
