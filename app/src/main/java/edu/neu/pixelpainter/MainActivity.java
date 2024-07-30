@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         maxLevel = headlines.size();
         List<ViewPagerItem> viewPagerArrayList = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
-            ViewPagerItem viewPagerItem = new ViewPagerItem(images.get(i), headlines.get(i));
+            ViewPagerItem viewPagerItem =  new ViewPagerItem(images.get(i), headlines.get(i), i + 1 > processing);
             viewPagerArrayList.add(viewPagerItem);
         }
         viewPagerAdapter = new ViewPagerAdapter(viewPagerArrayList);

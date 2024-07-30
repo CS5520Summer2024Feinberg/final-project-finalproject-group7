@@ -1,5 +1,8 @@
 package edu.neu.pixelpainter;
 
+
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +39,14 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ViewPagerItem viewPagerItem =viewPageItemArrayList.get(position);
         holder.imageView.setImageResource(viewPagerItem.imageID);
+        // Clear any existing color filter
+        holder.imageView.clearColorFilter();
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0); // Set saturation to 0 to apply grayscale
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        if (viewPagerItem.gray && position != 0){
+            holder.imageView.setColorFilter(filter);
+        }
         holder.textView.setText(viewPagerItem.heading);
     }
 

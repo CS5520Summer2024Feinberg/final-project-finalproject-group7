@@ -4,9 +4,13 @@ public class ViewPagerItem {
     int imageID;
     String heading;
 
-    public ViewPagerItem(int imageID, String heading) {
+    boolean gray;
+
+    public ViewPagerItem(int imageID, String heading, boolean gray) {
         this.imageID = imageID;
         this.heading = heading;
+        this.gray = gray;
+
     }
 
     public int getImageID() {
