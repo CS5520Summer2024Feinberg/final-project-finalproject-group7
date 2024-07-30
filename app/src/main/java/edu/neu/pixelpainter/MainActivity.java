@@ -29,9 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSignup;
     private Button buttonSignout;
 
-    private Button buttonAdvanture;
-
-    private Button buttonFreestyle;
+    private  Button buttonStart;
     private Button buttonSettings;
 
     private String username;
@@ -56,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
         buttonLogin = findViewById(R.id.button_login);
         buttonSignup = findViewById(R.id.button_signup);
         buttonSignout = findViewById(R.id.button_signout);
-        buttonAdvanture = findViewById(R.id.button_adventure_mode);
-        buttonFreestyle = findViewById(R.id.button_freestyle_mode);
+        buttonStart = findViewById(R.id.button_start_mode);
         buttonSettings = findViewById(R.id.button_settings);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_main), (v, insets) -> {
@@ -82,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         buttonLogin.setVisibility(isLoggedIn ? View.GONE : View.VISIBLE);
         buttonSignup.setVisibility(isLoggedIn ? View.GONE : View.VISIBLE);
         buttonSignout.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
-        buttonAdvanture.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
+        buttonStart.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
 
         // Set up button click listeners
         buttonLogin.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
@@ -94,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             buttonLogin.setVisibility(View.VISIBLE);
             buttonSignup.setVisibility(View.VISIBLE);
             buttonSignout.setVisibility(View.GONE);
-            buttonAdvanture.setVisibility(View.GONE);
+            buttonStart.setVisibility(View.GONE);
         });
 
         // Set up ViewPager2
@@ -152,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                     gameIntent.putExtra("username", username); // Pass username or null
                     gameIntent.putExtra("processing", processing); // Pass the current processing value
                     gameIntent.putExtra("maxLevel", maxLevel);
-                    gameIntent.putExtra("isFreestyle", false);
                     SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
                     boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
                     gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
@@ -161,29 +157,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Freestyle button click listener
-        buttonFreestyle.setOnClickListener(v -> {
-            Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
-            Random random = new Random();
-            gameIntent.putExtra("level", random.nextInt(images.size()) + 1);
-            gameIntent.putExtra("username", username); // Pass username or null
-            gameIntent.putExtra("processing", processing); // Pass the current processing value
-            gameIntent.putExtra("maxLevel", maxLevel);
-            gameIntent.putExtra("isFreestyle", true);
-            SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
-            boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
-            gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
-            startActivity(gameIntent);
-        });
-
         // Adventure button click listener
-        buttonAdvanture.setOnClickListener(v -> {
+        buttonStart.setOnClickListener(v -> { // <-- Changed from buttonAdvanture to buttonStart
             Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
             gameIntent.putExtra("level", processing);
             gameIntent.putExtra("username", username); // Pass username or null
             gameIntent.putExtra("processing", processing); // Pass the current processing value
             gameIntent.putExtra("maxLevel", maxLevel);
-            gameIntent.putExtra("isFreestyle", false);
+
             SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
             boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
             gameIntent.putExtra("isMusicEnabled", isMusicEnabled);

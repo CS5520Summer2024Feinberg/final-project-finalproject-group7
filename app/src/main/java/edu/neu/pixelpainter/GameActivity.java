@@ -39,7 +39,7 @@ public class GameActivity extends AppCompatActivity {
     private static final String KEY_ERASE_MODE = "erase_mode";
     private static final String KEY_SELECTED_COLOR = "selected_color";
     private static final String KEY_LEVEL = "level";
-    private boolean isFreestyle;
+
     private MusicService musicService;
     private boolean isBound = false;
 
@@ -73,7 +73,7 @@ public class GameActivity extends AppCompatActivity {
         username = intent.getStringExtra("username");
         processing = intent.getIntExtra("processing", 1);
         int maxLevel = intent.getIntExtra("maxLevel", 3);
-        isFreestyle = intent.getBooleanExtra("isFreestyle", false);
+
         isMusicEnabled = intent.getBooleanExtra("isMusicEnabled", false);
 
         Log.i("onCreate", String.valueOf(level));
@@ -139,7 +139,7 @@ public class GameActivity extends AppCompatActivity {
 
 
             float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
-            Log.i("correctRatio", String.valueOf(correctRatio));
+
             if (correctRatio >= 0.01) {
                 int newLevel = level + 1;
 
@@ -148,7 +148,7 @@ public class GameActivity extends AppCompatActivity {
                     updateProcessingField(username, newLevel);
                 }
 
-                if (newLevel > maxLevel && !isFreestyle) {
+                if (newLevel > maxLevel) {
                     // Show congratulations message and return to previous menu
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
                     builder.setTitle("Congratulations")
@@ -167,11 +167,11 @@ public class GameActivity extends AppCompatActivity {
                 } else {
                     // Proceed to the next level or random level in freestyle mode
                     Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
-                    gameIntent.putExtra("level", isFreestyle ? new Random().nextInt(maxLevel) + 1 : newLevel);
+                    gameIntent.putExtra("level",newLevel);
                     gameIntent.putExtra("username", username); // Pass the username
                     gameIntent.putExtra("processing", newLevel > processing ? newLevel : processing); // Pass the updated processing value
                     gameIntent.putExtra("maxLevel", maxLevel); // passing the max level of the game
-                    gameIntent.putExtra("isFreestyle", isFreestyle); // passing the boolean is this a freestyle mode
+
                     gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
                     startActivity(gameIntent);
                     finish();
