@@ -13,12 +13,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -112,32 +115,6 @@ public class GameActivity extends AppCompatActivity {
 
         Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(v -> {
-            if (username == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
-                builder.setTitle("Login Required");
-                builder.setMessage("Please login to continue.");
-
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setPositiveButton("Login", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(GameActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
-                return;
-            }
-
-
             float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
 
             if (correctRatio >= 0.01) {
@@ -148,7 +125,7 @@ public class GameActivity extends AppCompatActivity {
                     updateProcessingField(username, newLevel);
                 }
 
-                if (newLevel > maxLevel) {
+                if (newLevel > maxLevel && username != null) {
                     // Show congratulations message and return to previous menu
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
                     builder.setTitle("Congratulations")
@@ -164,7 +141,32 @@ public class GameActivity extends AppCompatActivity {
                                 finish();
                             })
                             .show();
-                } else {
+                }
+                // use not login
+                else if (username == null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                    builder.setTitle("Congratulations!");
+                    builder.setMessage("You have completed this level!Please login to continue.");
+
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    builder.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(GameActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+               else {
                     // Proceed to the next level or random level in freestyle mode
                     Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
                     gameIntent.putExtra("level",newLevel);
@@ -175,7 +177,8 @@ public class GameActivity extends AppCompatActivity {
                     gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
                     startActivity(gameIntent);
                     finish();
-                }
+               }
+
             } else {
                 Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
 
