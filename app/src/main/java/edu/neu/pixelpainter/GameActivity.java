@@ -167,16 +167,27 @@ public class GameActivity extends AppCompatActivity {
                     alert.show();
                 }
                else {
-                    // Proceed to the next level or random level in freestyle mode
-                    Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
-                    gameIntent.putExtra("level",newLevel);
-                    gameIntent.putExtra("username", username); // Pass the username
-                    gameIntent.putExtra("processing", newLevel > processing ? newLevel : processing); // Pass the updated processing value
-                    gameIntent.putExtra("maxLevel", maxLevel); // passing the max level of the game
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                    builder.setTitle("Congratulations!");
+                    builder.setPositiveButton("Progress", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Proceed to the next level or random level in freestyle mode
+                            Intent gameIntent = new Intent(GameActivity.this, GameActivity.class);
+                            gameIntent.putExtra("level",newLevel);
+                            gameIntent.putExtra("username", username); // Pass the username
+                            gameIntent.putExtra("processing", newLevel > processing ? newLevel : processing); // Pass the updated processing value
+                            gameIntent.putExtra("maxLevel", maxLevel); // passing the max level of the game
 
-                    gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
-                    startActivity(gameIntent);
-                    finish();
+                            gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
+                            startActivity(gameIntent);
+                            finish();
+                        }
+                    });
+
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
                }
 
             } else {
