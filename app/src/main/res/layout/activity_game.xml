@@ -63,8 +63,38 @@
             android:background="#FFFFFF"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp" />
-    </LinearLayout>
 
+
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center">
+    <TextView
+        android:id="@+id/remaining_touches"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/comicneue_bold"
+        android:text="Remaining Touches: "
+        android:textColor="@color/textColorPrimary"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/remaining_touches_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="3"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/textColorPrimary"
+        android:fontFamily="@font/comicneue_bold" />
+
+    </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

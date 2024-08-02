@@ -46,6 +46,8 @@ public class GameActivity extends AppCompatActivity {
     private MusicService musicService;
     private boolean isBound = false;
 
+    private TextView remainingTouchesNumber;
+
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -107,6 +109,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         Button eraseButton = findViewById(R.id.eraseButton);
+        eraseButton.setVisibility(View.GONE);
         eraseButton.setOnClickListener(v -> {
             eraseMode = true;
             pixelCanvasView.setEraseMode(true);
@@ -146,7 +149,7 @@ public class GameActivity extends AppCompatActivity {
                 else if (username == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
                     builder.setTitle("Congratulations!");
-                    builder.setMessage("You have completed this level!Please login to continue.");
+                    builder.setMessage("You have completed this level !\nPlease login to continue.");
 
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
@@ -226,6 +229,19 @@ public class GameActivity extends AppCompatActivity {
             bindService(musicIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(musicIntent);
         }
+
+
+        TextView remainingTouches = findViewById(R.id.remaining_touches);
+        remainingTouchesNumber = findViewById(R.id.remaining_touches_number);
+        if (this.level < 6){
+            remainingTouches.setVisibility(View.INVISIBLE);
+            remainingTouchesNumber.setVisibility(View.INVISIBLE);
+            eraseButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void updateRemainingTouchesNumber(int remainingTouches) {
+        remainingTouchesNumber.setText(String.valueOf(remainingTouches));
     }
 
     @Override

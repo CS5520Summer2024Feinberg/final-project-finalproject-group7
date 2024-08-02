@@ -1,25 +1,35 @@
 package edu.neu.pixelpainter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.TypedArray;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class PixelCanvasView extends View {
+public class PixelCanvasView extends View implements SensorEventListener{
 
     private Paint paint;
     private int[][] pixels;
@@ -37,6 +47,22 @@ public class PixelCanvasView extends View {
 
     private long downTime;
     private static final long CLICK_THRESHOLD = 500; // Threshold for a click in milliseconds
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private int startX = -1;
+    private int startY = -1;
+
+    private static final int MAX_TOUCHES = 3;
+
+    private int touches = 0;
+
+    private long lastUpdateTime = 0;
+
+
+    private Paint ballPaint;
+    private int ballRadius = 20;
+
+
 
     public PixelCanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -51,26 +77,25 @@ public class PixelCanvasView extends View {
         textPaint.setColor(Color.BLACK);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(30);
-
+        int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            textPaint.setColor(Color.WHITE);
+        } else {
+            textPaint.setColor(Color.BLACK);
+        }
         pixels = new int[gridSize][gridSize];
         backgroundNumbers = new int[gridSize][gridSize];
-//        init(attrs);
-//        generateBackgroundNumbers();
+
+        init();
+
+
+
     }
-//    private void init(AttributeSet attrs) {
-//        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PixelCanvasView);
-//        level = a.getInt(R.styleable.PixelCanvasView_level, 0); // Default to 0 if not set
-//        a.recycle();
-//    }
-
-//    private void generateBackgroundNumbers() {
-//        for (int i = 0; i < gridSize; i++) {
-//            for (int j = 0; j < gridSize; j++) {
-//                backgroundNumbers[i][j] = (i * gridSize + j) % 10 + 1; // Assign numbers 1 to 10 cyclically
-//            }
-//        }
-//    }
-
+    private void init() {
+        ballPaint = new Paint();
+        ballPaint.setColor(Color.WHITE);  // Color of the ball
+        ballPaint.setStyle(Paint.Style.FILL);
+    }
     private void generateBackgroundNumbers() {
         Log.i("generateBackgroundNumbers", String.valueOf(this.level));
         int resId = context.getResources().getIdentifier("level" + this.level, "raw", context.getPackageName());
@@ -129,6 +154,13 @@ public class PixelCanvasView extends View {
                 }
             }
         }
+
+        // Draw the ball at (startX, startY)
+        if (startX != -1 && startY != -1) {
+            canvas.drawCircle(offsetX + startX * pixelSize + pixelSize / 2, offsetY + startY * pixelSize + pixelSize / 2, ballRadius, ballPaint);
+        }
+
+
     }
 
 
@@ -158,7 +190,25 @@ public class PixelCanvasView extends View {
                             if (selectedColor == Color.WHITE) {
                                 Toast.makeText(PixelCanvasView.this.getContext(), "Please select a color.", Toast.LENGTH_SHORT).show();
                             } else {
-                                pixels[x][y] = selectedColor;
+                                if (this.level >= 6){
+                                    //final level
+                                    touches += 1;
+                                    if (touches == 1){
+                                        Toast.makeText(PixelCanvasView.this.getContext(), "Tilt your phone to color pixels!", Toast.LENGTH_SHORT).show();
+                                    }
+                                    if (touches <= MAX_TOUCHES){
+                                        if (getContext() instanceof GameActivity) {
+                                            ((GameActivity) getContext()).updateRemainingTouchesNumber(MAX_TOUCHES - touches);
+                                        }
+                                        pixels[x][y] = selectedColor;
+                                        startX = x;
+                                        startY = y;
+                                    }else {
+                                        Toast.makeText(PixelCanvasView.this.getContext(), "Reached the Maximum Touches!\n Tilt your phone to color or SAVE!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }else {
+                                    pixels[x][y] = selectedColor;
+                                }
                             }
                         }
                         invalidate();
@@ -187,7 +237,28 @@ public class PixelCanvasView extends View {
     public void setLevel(int level) {
         this.level = level;
         generateBackgroundNumbers();
+        startSensor();
         invalidate();
+    }
+
+    private void startSensor() {
+        Log.i("level",String.valueOf(this.level));
+        if (this.level >= 6){
+            AlertDialog.Builder builder = new AlertDialog.Builder(PixelCanvasView.this.getContext());
+            builder.setTitle("Final Challenge!");
+            builder.setMessage("Color a pixel to start your trip.");
+            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+            sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     public int getLevel() {
@@ -239,6 +310,47 @@ public class PixelCanvasView extends View {
         invalidate();
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        double x = event.values[0];
+        double y = event.values[1];
+        double z = event.values[2];
+
+        long currentTime = System.currentTimeMillis();
+        double tiltX = Math.atan2(y, z) * (180 / Math.PI);
+        double tiltY = Math.atan2(x, z) * (180 / Math.PI);
+
+        // Check if the angle is greater than 30 degrees
+        if (Math.abs(tiltX) > 30 || Math.abs(tiltY) > 30) {
+            // Check if more than 1 second has passed since the last update
+            if (currentTime - lastUpdateTime > 500) {
+                lastUpdateTime = currentTime;
+                if (startX != -1 && startY != -1) {
+                    if (Math.abs(x) > Math.abs(y)) {
+                        if (x < 0 && startX < gridSize - 1) {
+                            startX++;
+                        } else if (x > 0 && startX > 0) {
+                            startX--;
+                        }
+                    } else {
+                        if (y < 0 && startY < gridSize - 1) {
+                            startY--;
+                        } else if (y > 0 && startY > 0) {
+                            startY++;
+                        }
+                    }
+                    pixels[startX][startY] = selectedColor;
+                    invalidate();
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 
 
     static class SavedState extends BaseSavedState {

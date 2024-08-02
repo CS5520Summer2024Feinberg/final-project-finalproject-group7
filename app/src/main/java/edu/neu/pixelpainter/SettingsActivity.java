@@ -1,5 +1,6 @@
 package edu.neu.pixelpainter;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
@@ -33,7 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
             editor.putBoolean("backgroundMusic", switchBackgroundMusic.isChecked());
             editor.putBoolean("vibration", switchVibration.isChecked());
             editor.apply();
-            Toast.makeText(SettingsActivity.this, "Settings saved", Toast.LENGTH_SHORT).show();
+            Intent mainIntent = new Intent(SettingsActivity.this, MainActivity.class);
+            startActivity(mainIntent);
         });
     }
 }

@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             // Signout logic
             Toast.makeText(MainActivity.this, "Goodbye, " + username, Toast.LENGTH_SHORT).show();
             username = null;
+            processing = 1;
             buttonLogin.setVisibility(View.VISIBLE);
             buttonSignup.setVisibility(View.VISIBLE);
             buttonSignout.setVisibility(View.GONE);
@@ -158,17 +159,35 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Adventure button click listener
-        buttonStart.setOnClickListener(v -> { // <-- Changed from buttonAdvanture to buttonStart
-            Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
-            gameIntent.putExtra("level", processing);
-            gameIntent.putExtra("username", username); // Pass username or null
-            gameIntent.putExtra("processing", processing); // Pass the current processing value
-            gameIntent.putExtra("maxLevel", maxLevel);
+        buttonStart.setOnClickListener(v -> {
+            // <-- Changed from buttonAdvanture to buttonStart
+            if (processing > maxLevel){
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Passed All Levels!");
+                builder.setMessage("New levels are coming soon.");
+                builder.setNegativeButton("Cool", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
 
-            SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
-            boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
-            gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
-            startActivity(gameIntent);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }else {
+                Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
+                gameIntent.putExtra("level", processing);
+                gameIntent.putExtra("username", username); // Pass username or null
+                gameIntent.putExtra("processing", processing); // Pass the current processing value
+                gameIntent.putExtra("maxLevel", maxLevel);
+
+                SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
+                boolean isMusicEnabled = preferences.getBoolean("backgroundMusic", false);
+                gameIntent.putExtra("isMusicEnabled", isMusicEnabled);
+                startActivity(gameIntent);
+            }
+
         });
 
         buttonSettings.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
