@@ -15,6 +15,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="Settings"
+        style="@style/GameButtonStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,6 +27,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="Login"
+        style="@style/GameButtonStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="Signup"
+        style="@style/GameButtonStyle"
         app:layout_constraintBottom_toTopOf="@+id/viewPager"
         app:layout_constraintEnd_toStartOf="@+id/button_login"
         app:layout_constraintHorizontal_bias="0.426"
@@ -50,6 +53,7 @@
         android:layout_marginEnd="20dp"
         android:text="Signout"
         android:visibility="gone"
+        style="@style/GameButtonStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -71,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="Start"
+        style="@style/GameButtonStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

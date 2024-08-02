@@ -1,0 +1,12 @@
+<!-- res/values/styles.xml -->
+<resources>
+    <style name="GameButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@drawable/custom_button</item> <!-- 使用自定义背景 -->
+        <item name="android:textColor">@color/buttonTextColor</item> <!-- 按钮文字颜色 -->
+        <item name="android:textSize">18sp</item> <!-- 文字大小 -->
+        <item name="android:padding">12dp</item> <!-- 内边距 -->
+        <item name="android:fontFamily">@font/comicneue_bold</item>
+
+    </style>
+</resources>
+

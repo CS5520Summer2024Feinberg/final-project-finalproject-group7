@@ -1,0 +1,6 @@
+<!-- res/drawable/game_button_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/buttonColor"/> <!-- 按钮颜色 -->
+    <corners android:radius="12dp"/> <!-- 圆角半径 -->
+    <stroke android:width="2dp" android:color="@color/primaryDarkColor"/> <!-- 边框颜色 -->
+</shape>
