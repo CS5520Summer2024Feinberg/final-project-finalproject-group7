@@ -88,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:onClick="onBackToLoginClicked"
+        android:onClick="onLoginLinkClicked"
         android:text="Already have an account? Login"
         android:textColor="@android:color/holo_blue_light"
         android:fontFamily="@font/comicneue_italic"
