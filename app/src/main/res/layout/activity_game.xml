@@ -11,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#DDDDDD"
-        android:paddingBottom="16dp">
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <LinearLayout
             android:id="@+id/paletteLayout"
@@ -25,6 +28,8 @@
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <!-- Selected Color and Level -->
     <LinearLayout
         android:id="@+id/selectedColorView"
         android:layout_width="match_parent"
@@ -37,24 +42,29 @@
             android:id="@+id/level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:layout_marginEnd="8dp" />
-
+            android:textSize="18sp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/textColorPrimary"
+            android:fontFamily="@font/comicneue_bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Selected Color: "
-            android:textSize="10sp"
-            android:layout_marginEnd="8dp" />
+            android:textSize="18sp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/textColorPrimary"
+            android:fontFamily="@font/comicneue_bold" />
 
         <View
             android:id="@+id/colorDisplay"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="#FFFFFF"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -93,14 +103,24 @@
             android:id="@+id/eraseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Erase" />
+            android:text="Erase"
+            android:textSize="18sp"
+            android:padding="12dp"
+            android:fontFamily="@font/comicneue_bold"
+            style="@style/GameButtonStyle"
+            android:layout_marginEnd="16dp" />
 
         <Button
             android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save" />
+            android:text="Save"
+            android:textSize="18sp"
+            android:padding="12dp"
+            android:fontFamily="@font/comicneue_bold"
+            style="@style/GameButtonStyle" />
 
     </LinearLayout>
 
 </LinearLayout>
+
