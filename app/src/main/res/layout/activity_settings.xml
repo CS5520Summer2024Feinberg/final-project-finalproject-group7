@@ -6,32 +6,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/backgroundColor">
 
+    <!-- Background Music Switch -->
     <Switch
         android:id="@+id/switch_background_music"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:text="Background Music"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="18sp"
+        android:fontFamily="@font/comicneue_bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
+    <!-- Vibration Switch -->
     <Switch
         android:id="@+id/switch_vibration"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:text="Vibration on Level Achieved"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="18sp"
+        android:fontFamily="@font/comicneue_bold"
         app:layout_constraintTop_toBottomOf="@id/switch_background_music"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
+    <!-- Save Button -->
     <Button
         android:id="@+id/button_save_settings"
         android:layout_width="wrap_content"
@@ -39,10 +49,13 @@
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:text="Save"
+        android:textSize="18sp"
+        style="@style/GameButtonStyle"
         app:layout_constraintTop_toBottomOf="@id/switch_vibration"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
