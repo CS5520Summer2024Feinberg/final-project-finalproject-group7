@@ -194,8 +194,6 @@ public class GameActivity extends AppCompatActivity {
                }
 
             } else {
-                Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
-
                 // Add this block to handle vibration
                 SharedPreferences preferences = getSharedPreferences("GameSettings", MODE_PRIVATE);
                 boolean isVibrationEnabled = preferences.getBoolean("vibration", false);
@@ -205,6 +203,28 @@ public class GameActivity extends AppCompatActivity {
                         vibrator.vibrate(500); // Vibrate for 500 milliseconds
                     }
                 }
+                Log.i("this.level < 6", String.valueOf(this.level));
+                if (this.level < 6){
+                    Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
+                }else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                    builder.setTitle("Nice Job!");
+                    builder.setMessage("Try to do better!");
+
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+
+
+
+
             }
         });
 
