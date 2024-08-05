@@ -352,6 +352,11 @@ public class PixelCanvasView extends View implements SensorEventListener{
 
     }
 
+    public void stopSensor() {
+        sensorManager.unregisterListener(this);
+
+    }
+
 
     static class SavedState extends BaseSavedState {
         int[][] pixels;

@@ -129,6 +129,7 @@ public class GameActivity extends AppCompatActivity {
                 }
 
                 if (newLevel > maxLevel && username != null) {
+                    pixelCanvasView.stopSensor();
                     // Show congratulations message and return to previous menu
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
                     builder.setTitle("Congratulations")
@@ -208,9 +209,9 @@ public class GameActivity extends AppCompatActivity {
                     Toast.makeText(GameActivity.this, "Nice Job! Try to do better!", Toast.LENGTH_SHORT).show();
                 }else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
-                    builder.setTitle("Nice Job!");
+                    builder.setTitle("Defeat!");
                     builder.setMessage("Try to do better!");
-
+                    pixelCanvasView.stopSensor();
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
