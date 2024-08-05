@@ -120,7 +120,7 @@ public class GameActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> {
             float correctRatio = pixelCanvasView.getCorrectColorRatio(colorNumbers, colors);
 
-            if (correctRatio >= 0.01) {
+            if (correctRatio >= 0.9) {
                 int newLevel = level + 1;
 
                 // Update the processing field in Firebase if the username is not null and newLevel is greater than current processing

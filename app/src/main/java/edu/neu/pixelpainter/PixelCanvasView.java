@@ -284,8 +284,8 @@ public class PixelCanvasView extends View implements SensorEventListener{
                 }
             }
         }
-
-
+        Log.i("correctCount", String.valueOf(correctCount));
+        Log.i("count", String.valueOf(count));
         return correctCount /count;
     }
 
